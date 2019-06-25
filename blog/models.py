@@ -1,12 +1,14 @@
 from django.db import models
 from django.utils import timezone
+from mptt.models import MPTTModel, TreeForeignKey
 
 
-class Category(models.Model):
+class Category(MPTTModel):
     """Модель категорий к статье"""
     name = models.CharField("Название", max_length=150)
     slug = models.SlugField("url", max_length=160)
     published = models.BooleanField("Опубликовать", default=True)
+    parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
 
     def __str__(self):
         return self.name
@@ -49,12 +51,13 @@ class Post(models.Model):
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Статьи"
+        ordering = ["-created"]
 
 
 class CommentPost(models.Model):
     """Комментарии к статье"""
-    post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.PROTECT)
-    text = models.TextField("Комментарий")
+    post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.CASCADE)
+    text = models.TextField("Комментарий", max_length=1000)
     created = models.DateTimeField("Дата создания", auto_now_add=True)
     moderation = models.BooleanField("Опубликовать", default=False)
 

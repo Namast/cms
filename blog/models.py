@@ -1,13 +1,15 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+
 class Category(MPTTModel):
-    """Модель категорий к статье"""
+    """Модель категорий статей"""
     name = models.CharField("Название", max_length=150)
     slug = models.SlugField("url", max_length=160)
-    published = models.BooleanField("Опубликовать", default=True)
+    active = models.BooleanField("Опубликовать", default=True)
     parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
 
     def __str__(self):
@@ -34,19 +36,23 @@ class Tag(models.Model):
 class Post(models.Model):
     """Модель статей"""
     title = models.CharField("Заголовок", max_length=150)
-    description = models.TextField("Превью статьи", max_length=500)
-    text = models.TextField("Статья")
+    sub_title = models.CharField("Под заголовок", max_length=150)
+    mini_text = models.TextField("Превью статьи", max_length=500)
+    text = models.TextField("Превью статьи")
     created = models.DateTimeField("Дата создания", auto_now_add=True)
-    publish_data = models.DateTimeField("Дата публикации", default=timezone.now)
-    published = models.BooleanField("Опубликовать", default=True)
+    publish_date = models.DateTimeField("Дата публикации", default=timezone.now)
+    active = models.BooleanField("Опубликовать", default=True)
     sort = models.PositiveIntegerField("Порядок", default=0, unique=True)
     view = models.PositiveIntegerField("Просмотры", default=0)
     tags = models.ManyToManyField(Tag, verbose_name="Теги")
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.SET_NULL, null=True)
-    slug = models.SlugField("url", max_length=150)
+    slug = models.SlugField("url", max_length=160, unique=True, null=True)
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("post_detail", kwargs={"category": self.category.slug, "slug": self.slug})
 
     class Meta:
         verbose_name = "Статья"
@@ -54,16 +60,16 @@ class Post(models.Model):
         ordering = ["-created"]
 
 
-class CommentPost(models.Model):
-    """Комментарии к статье"""
-    post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.CASCADE)
+class Comment(models.Model):
+    """Модель комментариев к статье"""
     text = models.TextField("Комментарий", max_length=1000)
-    created = models.DateTimeField("Дата создания", auto_now_add=True)
-    moderation = models.BooleanField("Опубликовать", default=False)
+    post = models.ForeignKey(Post, verbose_name="Статья", on_delete=models.CASCADE)
+    created = models.DateTimeField("Дата", auto_now_add=True)
+    moderated = models.BooleanField("Статус одбрено", default=False)
 
     def __str__(self):
-        return self.post
+        return self.text
 
     class Meta:
-        verbose_name = "Комментарий"
-        verbose_name_plural = "Комментарии"
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

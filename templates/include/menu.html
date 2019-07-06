@@ -1,0 +1,10 @@
+<ul>
+    <li><a href='/'>Главная</a></li>
+    <li><a href='#'>О нас</a></li>
+    <li><a href='{% url "feedback" %}'>Обратная связь</a></li>
+    {% if user.is_authenticated %}
+        <li><a href='/accounts/logout/'>Выйти</a></li>
+    {% else %}
+        <li><a href='/accounts/login/'>Войти</a></li>
+    {% endif %}
+</ul>

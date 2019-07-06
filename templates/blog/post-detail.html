@@ -12,13 +12,12 @@
 <p>Теги: {{tag.name}}</p>
 {% endfor %}
 <p>Дата - {{ post.created|date:"D d M Y"  }}</p>
-
-
 <hr>
 <h4>Комментарии:</h4>
 <ul>
     {% for comment in comments %}
-       <li> {{comment.text}} </li>
+        <li> {{ comment.text }} </li>
+        <small>{{ comment.created }}</small>
     {% endfor %}
 </ul>
 

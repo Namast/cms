@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -54,6 +55,9 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse("post_detail", kwargs={"category": self.category.slug, "slug": self.slug})
 
+    def comment_all(self):
+        return Comment.objects.filter(post_id=self.id, moderated=True)
+
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Статьи"
@@ -62,6 +66,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     """Модель комментариев к статье"""
+    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     text = models.TextField("Комментарий", max_length=1000)
     post = models.ForeignKey(Post, verbose_name="Статья", on_delete=models.CASCADE)
     created = models.DateTimeField("Дата", auto_now_add=True)

@@ -1,7 +1,7 @@
 {% extends 'blog/base.html' %}
 {% load blog_tags %}
 
-{% block content %}
+{% block post %}
 {% category_list publish='False' %}
 <h1>{{post.title}}</h1>
 <h2>{{post.description}}</h2>
@@ -18,9 +18,9 @@
 <ul>
     {% for comment in comments %}
         {% if forloop.counter|comment_padding %}
-            <p style="padding-left: 50px;">
+            <p style="padding: 10px; border: 1px solid blue; margin-left: 50px;">
         {% else %}
-            <p style="border: 1px solid red;">
+            <p style="padding: 10px; border: 1px solid red;">
         {% endif %}
             {{ comment.text }}<br/>
             <small>{{ comment.created }}</small>
@@ -29,4 +29,4 @@
 </ul>
 
 
-{% endblock content %}
+{% endblock post %}

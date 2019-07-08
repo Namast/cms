@@ -17,8 +17,14 @@
 <h4>Комментарии:</h4>
 <ul>
     {% for comment in comments %}
-        <li> {{ comment.text }} </li>
-        <small>{{ comment.created }}</small>
+        {% if forloop.counter|comment_padding %}
+            <p style="padding-left: 50px;">
+        {% else %}
+            <p style="border: 1px solid red;">
+        {% endif %}
+            {{ comment.text }}<br/>
+            <small>{{ comment.created }}</small>
+            </p>
     {% endfor %}
 </ul>
 

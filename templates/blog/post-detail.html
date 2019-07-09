@@ -27,7 +27,7 @@
         <button type="submit">Отправить</button>
     </form>
     {% else %}
-    <p>Что бы оставить комментарий войдите на сайт или зарегестрируйтесь</p>
+    <p>Что бы оставить комментарий <a href="/accounts/login/">войдите</a> на сайт или <a href="/accounts/signup/">зарегестрируйтесь</a></p>
     {% endif %}
     {% for comment in post.comment_all %}
         {% if forloop.counter|comment_padding %}

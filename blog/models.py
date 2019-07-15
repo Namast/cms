@@ -12,9 +12,13 @@ class Category(MPTTModel):
     slug = models.SlugField("url", max_length=160)
     active = models.BooleanField("Опубликовать", default=True)
     parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
+    template = models.CharField("Шаблон", max_length=500, default="blog/post-list.html")
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("post_list_category", kwargs={"category": self.slug})
 
     class Meta:
         verbose_name = "Категория"

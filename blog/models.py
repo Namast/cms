@@ -5,7 +5,6 @@ from django.utils import timezone
 from mptt.models import MPTTModel, TreeForeignKey
 
 
-
 class Category(MPTTModel):
     """Модель категорий статей"""
     name = models.CharField("Название", max_length=150)
@@ -32,6 +31,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('tag_view', kwargs={'slug': self.slug})
 
     class Meta:
         verbose_name = "Тег"
@@ -71,13 +73,13 @@ class Post(models.Model):
 class Comment(models.Model):
     """Модель комментариев к статье"""
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
-    text = models.TextField("Комментарий", max_length=1000)
+    message = models.TextField("Комментарий", max_length=1000)
     post = models.ForeignKey(Post, verbose_name="Статья", on_delete=models.CASCADE)
     created = models.DateTimeField("Дата", auto_now_add=True)
     moderated = models.BooleanField("Статус одбрено", default=False)
 
     def __str__(self):
-        return self.text
+        return self.message
 
     class Meta:
         verbose_name = 'Комментарий'

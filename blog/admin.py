@@ -44,7 +44,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('text', 'post', 'moderated',)
+    list_display = ('message', 'post', 'moderated',)
     list_editable = ('moderated',)
 
 

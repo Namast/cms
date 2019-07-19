@@ -1,0 +1,8 @@
+{% extends 'blog/base.html' %}
+
+{% block post %}
+    <h3>Найдено: {{ post.count }}</h3>
+    {% for post in post_list %}
+        <h4><a href=""></a>{{ post.title }}</h4>
+    {% endfor %}
+{% endblock post %}

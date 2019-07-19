@@ -5,8 +5,9 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView
+from django.db.models import Q
 
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from .forms import CommentForm
 
 
@@ -43,11 +44,13 @@ class PostCategory(ListView):
     def get_queryset(self):
         if self.kwargs.get("category") is not None:
             posts = Post.objects.filter(category__slug=self.kwargs.get("category"), category__active=True)
+            if posts.exists():
+                self.template_name = posts.first().category.template
+            else:
+                raise Http404
         else:
             posts = Post.objects.filter(category__active=True)
-        if posts.exists():
-            self.template_name = posts.first().category.template
-        else:
+        if not posts.exists():
             raise Http404
         return posts
 
@@ -58,7 +61,7 @@ class PostDetail(DetailView, CreateView):
     template_name = "blog/post-detail.html"
     context_object_name = "post"
     form_class = CommentForm
-#    success_url = '/'
+#   success_url = '/'
 
     def form_valid(self, form):
         form.instance.post = Post.objects.get(slug=self.kwargs.get('slug'))
@@ -68,6 +71,16 @@ class PostDetail(DetailView, CreateView):
 #       self.success_url = reverse_lazy("post_detail", kwargs={"category": self.category.slug, "slug": self.slug})
         self.success_url = form.instance.post.get_absolute_url()
         return super().form_valid(form)
+
+
+class TagListView(ListView):
+    model = Post
+    template_name = 'blog/tag-list.html'
+    context_object_name = "tag"
+
+    def get_queryset(self):
+        return Tag.objects.get(slug=self.kwargs['slug'])
+
 
 # class PostDetail(View):
 #     """Вывод полной статьи"""
@@ -87,3 +100,17 @@ class PostDetail(DetailView, CreateView):
 #         else:
 #             messages.add_message(request, settings.MY_INFO, "Ошибка")
 #             return redirect(request.path)
+
+
+class SearchView(View):
+    template_name = "blog/search.html"
+
+    def get(self, request, *args, **kwargs):
+        query = self.request.GET.get('q')
+        founded_post = Post.objects.filter(
+            Q(title__icontains=query)|
+            Q(text__icontains=query))
+        context = {
+            'founded_post': founded_post
+        }
+        return render(self.request, self.template_name, context)

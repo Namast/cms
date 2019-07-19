@@ -15,11 +15,11 @@
     <p>Просмотров: {{post.view}}</p>
     <p>Категория: {{post.category}}</p>
     {% for tag in post.tags.all %}
-    <p>Теги: {{tag.name}}</p>
+#    <p>Теги: {{tag.name}}</p>
+    <p>Теги: <a href="{{ tag.get_absolute_url }}">{{ tag }}</a></p>
     {% endfor %}
     <p>Дата - {{ post.created|date:"D d M Y"  }}</p>
     <hr>
-    <h4>Комментарии:</h4>
     {% if user.is_authenticated %}
     <form action="" method="post">
         {% csrf_token %}
@@ -36,7 +36,7 @@
             <p style="padding: 10px; border: 1px solid red;">
         {% endif %}
             {{ comment.user }}<br>
-            {{ comment.text }}<br/>
+            {{ comment.message }}<br/>
             <small>{{ comment.created }}</small>
             </p>
     {% endfor %}

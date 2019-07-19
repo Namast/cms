@@ -7,4 +7,4 @@ class CommentForm(forms.ModelForm):
     """Форма комментариев"""
     class Meta:
         model = Comment
-        fields = ("text",)
+        fields = ("message",)

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Тег - {{ tag.name }}</h1>
+    <div class="container columns is-multiline">
+
+        {% for post in tag.post_set.all %}
+            <article class='column is-3 is-6-tablet'>
+                <h2><a href='{{ post.get_absolute_url }}'>{{ post.title }}</a></h2>
+                <p>{{ post.sub_title }}</p>
+                <div>
+                    {{ post.preview }}
+                </div>
+
+            </article>
+        {% endfor %}
+    </div>
+{% endblock content %}

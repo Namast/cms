@@ -13,9 +13,8 @@
     <p>{{post.text}}</p>
     <hr>
     <p>Просмотров: {{post.view}}</p>
-    <p>Категория: {{post.category}}</p>
+    <p>Категория: <a href="{{ post.category.get_absolute_url }}">{{post.category}}</a></p>
     {% for tag in post.tags.all %}
-#    <p>Теги: {{tag.name}}</p>
     <p>Теги: <a href="{{ tag.get_absolute_url }}">{{ tag }}</a></p>
     {% endfor %}
     <p>Дата - {{ post.created|date:"D d M Y"  }}</p>

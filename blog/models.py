@@ -45,7 +45,7 @@ class Post(models.Model):
     title = models.CharField("Заголовок", max_length=150)
     sub_title = models.CharField("Под заголовок", max_length=150)
     mini_text = models.TextField("Превью статьи", max_length=500)
-    text = models.TextField("Превью статьи")
+    text = models.TextField("Статья")
     created = models.DateTimeField("Дата создания", auto_now_add=True)
     publish_date = models.DateTimeField("Дата публикации", default=timezone.now)
     active = models.BooleanField("Опубликовать", default=True)

@@ -11,6 +11,26 @@ from .models import Post, Comment, Tag
 from .forms import CommentForm
 
 
+class PostCategory(ListView):
+    """Вывод статей"""
+    model = Post
+    template_name = "blog/post-list.html"
+    context_object_name = "post_list"
+
+    def get_queryset(self):
+        if self.kwargs.get("category") is not None:
+            posts = Post.objects.filter(category__slug=self.kwargs.get("category"), category__active=True)
+            if posts.exists():
+                self.template_name = posts.first().category.template
+            else:
+                raise Http404
+        else:
+            posts = Post.objects.filter(category__active=True)
+        if not posts.exists():
+            raise Http404
+        return posts
+
+
 # class PostList(View):
 #     """Вывод списка статей"""
 #     def get(self, request, *args, **kwargs):
@@ -35,26 +55,6 @@ from .forms import CommentForm
 #     context_object_name = "post_list"
 
 
-class PostCategory(ListView):
-    """Вывод статей"""
-    model = Post
-    template_name = "blog/post-list.html"
-    context_object_name = "post_list"
-
-    def get_queryset(self):
-        if self.kwargs.get("category") is not None:
-            posts = Post.objects.filter(category__slug=self.kwargs.get("category"), category__active=True)
-            if posts.exists():
-                self.template_name = posts.first().category.template
-            else:
-                raise Http404
-        else:
-            posts = Post.objects.filter(category__active=True)
-        if not posts.exists():
-            raise Http404
-        return posts
-
-
 class PostDetail(DetailView, CreateView):
     """Вывод полной статьи"""
     model = Post
@@ -71,15 +71,6 @@ class PostDetail(DetailView, CreateView):
 #       self.success_url = reverse_lazy("post_detail", kwargs={"category": self.category.slug, "slug": self.slug})
         self.success_url = form.instance.post.get_absolute_url()
         return super().form_valid(form)
-
-
-class TagListView(ListView):
-    model = Post
-    template_name = 'blog/tag-list.html'
-    context_object_name = "tag"
-
-    def get_queryset(self):
-        return Tag.objects.get(slug=self.kwargs['slug'])
 
 
 # class PostDetail(View):
@@ -103,14 +94,32 @@ class TagListView(ListView):
 
 
 class SearchView(View):
-    template_name = "blog/search.html"
+    """Поиск статей"""
+    def get(self, request):
+        search = request.GET.get("q", None)
+        posts = Post.objects.filter(Q(title__icontains=search) |
+                                    Q(text__icontains=search))
+        return render(request, "blog/search.html", {"post_list": posts})
 
-    def get(self, request, *args, **kwargs):
-        query = self.request.GET.get('q')
-        founded_post = Post.objects.filter(
-            Q(title__icontains=query)|
-            Q(text__icontains=query))
-        context = {
-            'founded_post': founded_post
-        }
-        return render(self.request, self.template_name, context)
+
+# class SearchView(View):
+#     """Поиск статей"""
+#     template_name = "blog/search.html"
+#
+#     def get(self, request):
+#         search = request.GET.get("q", None)
+#         posts = Post.objects.filter(Q(title__icontains=search) |
+#                                     Q(text__icontains=search))
+#         context = {
+#             "post_list": posts
+#         }
+#         return render(self.request, self.template_name, context)
+
+
+class TagListView(ListView):
+    model = Post
+    template_name = 'blog/tag-list.html'
+    context_object_name = "tag"
+
+    def get_queryset(self):
+        return Tag.objects.get(slug=self.kwargs['slug'])

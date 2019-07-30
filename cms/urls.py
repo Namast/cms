@@ -24,6 +24,8 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('accounts/', include('allauth.urls')),
     path('feedback/', include('feedback.urls')),
+    path('shop/', include('apps.shop.urls')),
+    path('search/', include('apps.search.urls')),
     path('blog/', include('blog.urls')),
     path('', include('pages.urls')),
 ]

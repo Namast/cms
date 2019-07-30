@@ -5,7 +5,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView
-from django.db.models import Q
+
 
 from .models import Post, Comment, Tag
 from .forms import CommentForm
@@ -91,29 +91,6 @@ class PostDetail(DetailView, CreateView):
 #         else:
 #             messages.add_message(request, settings.MY_INFO, "Ошибка")
 #             return redirect(request.path)
-
-
-class SearchView(View):
-    """Поиск статей"""
-    def get(self, request):
-        search = request.GET.get("q", None)
-        posts = Post.objects.filter(Q(title__icontains=search) |
-                                    Q(text__icontains=search))
-        return render(request, "blog/search.html", {"post_list": posts})
-
-
-# class SearchView(View):
-#     """Поиск статей"""
-#     template_name = "blog/search.html"
-#
-#     def get(self, request):
-#         search = request.GET.get("q", None)
-#         posts = Post.objects.filter(Q(title__icontains=search) |
-#                                     Q(text__icontains=search))
-#         context = {
-#             "post_list": posts
-#         }
-#         return render(self.request, self.template_name, context)
 
 
 class TagListView(ListView):

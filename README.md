@@ -1,1 +1,1 @@
-#CMS Django
+#Shop&blog Django

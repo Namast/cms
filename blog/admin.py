@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 from .models import Post, Tag, Category, Comment
 
 
-class CategoryAdmin(MPTTModelAdmin):
+class CategoryMPTTModelAdmin(MPTTModelAdmin):
     """Категории"""
     mptt_level_indent = 20
 
@@ -29,7 +29,7 @@ class PostAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryMPTTModelAdmin(MPTTModelAdmin):
     list_display = ('name', 'active', 'parent')
     list_filter = ('active',)
     prepopulated_fields = {"slug": ("name",)}

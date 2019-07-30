@@ -3,11 +3,7 @@
 
 {% block post %}
 {% category_list publish='False' %}
-    {% if messages %}
-        {% for message in messages %}
-            <p style="color: peru;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+
     <h1>{{post.title}}</h1>
     <h2>{{post.description}}</h2>
     <p>{{post.text}}</p>
@@ -19,6 +15,11 @@
     {% endfor %}
     <p>Дата - {{ post.created|date:"D d M Y"  }}</p>
     <hr>
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: peru;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
     {% if user.is_authenticated %}
     <form action="" method="post">
         {% csrf_token %}
@@ -28,6 +29,7 @@
     {% else %}
     <p>Что бы оставить комментарий <a href="/accounts/login/">войдите</a> на сайт или <a href="/accounts/signup/">зарегестрируйтесь</a></p>
     {% endif %}
+    <h2>Всего комментариев: {{ post.comment_all.count }}</h2>
     {% for comment in post.comment_all %}
         {% if forloop.counter|comment_padding %}
             <p style="padding: 10px; border: 1px solid blue; margin-left: 50px;">

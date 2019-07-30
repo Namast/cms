@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     'mptt',
     'ckeditor',
 
+    'apps.shop',
     'blog',
     'feedback',
     'pages',
     'menu',
+    'apps.search',
 ]
 
 MIDDLEWARE = [
